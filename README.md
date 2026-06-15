@@ -2,19 +2,27 @@
 
 Interactive three-dimensional principal component analysis (PCA) plot showing cluster separation in diabetes subtypes (SIDD, SIRD, MOD, MARD).
 
-## Interactive figure (for manuscript readers)
+## Interactive figure (click to open in browser)
 
-**Live link:** https://senoldogan.github.io/DIA-Cluster-3D/
+**Manuscript link:** https://senoldogan.github.io/DIA-Cluster-3D/
 
-Open in any web browser. Drag to rotate the 3D plot; scroll to zoom; hover over points for cluster details.
+> If the link above returns 404, enable GitHub Pages once:  
+> Repository **Settings → Pages → Build and deployment → Deploy from branch → `gh-pages` / `/ (root)` → Save**
 
-## Files
+**Alternative (works immediately):**  
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/SenolDogan/DIA-Cluster-3D/main/index.html
 
-| File | Description |
-|------|-------------|
-| `index.html` | Interactive 3D PCA figure (main entry point for GitHub Pages) |
-| `Cluster_Separation_PCA_3D_interactive.html` | Same interactive figure |
-| `create_pca_plot_3d_interactive.py` | Python script to regenerate the figure |
+Drag to rotate · scroll to zoom · hover for cluster details.
+
+## Repository
+
+https://github.com/SenolDogan/DIA-Cluster-3D
+
+## Manuscript citation
+
+> **Supplementary Material S1.** Interactive three-dimensional PCA plot of cluster separation. Available at: https://senoldogan.github.io/DIA-Cluster-3D/
+
+See `MANUSCRIPT_CITATION.txt` for ready-to-paste text (Vancouver, APA, figure legend).
 
 ## Regenerate locally
 
@@ -24,11 +32,3 @@ python create_pca_plot_3d_interactive.py
 ```
 
 Requires `Dataset.csv` in the same directory (not included in this repository).
-
-## Citation (manuscript supplementary material)
-
-> **Supplementary Material S1.** Interactive three-dimensional PCA plot of cluster separation. Available at: https://senoldogan.github.io/DIA-Cluster-3D/ (accessed [date]).
-
-## License
-
-For use as supplementary material accompanying the associated manuscript.

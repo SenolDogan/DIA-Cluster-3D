@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Deploy GitHub Pages (gh-pages branch)
 
 on:
   push:
@@ -6,25 +6,18 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
+  contents: write
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: .
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          exclude_assets: '.github,create_pca_plot_3d_interactive.py,MANUSCRIPT_CITATION.txt,README.md,Cluster_Separation_PCA_3D_interactive.html'
+          publish_branch: gh-pages
+          force_orphan: true

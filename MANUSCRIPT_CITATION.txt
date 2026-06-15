@@ -1,6 +1,14 @@
 MANUSCRIPT — READY-TO-PASTE TEXT
 ================================
 
+PRIMARY LINK (use after GitHub Pages is enabled):
+-------------------------------------------------
+https://senoldogan.github.io/DIA-Cluster-3D/
+
+GitHub repository:
+------------------
+https://github.com/SenolDogan/DIA-Cluster-3D
+
 Figure legend (add to static Figure X legend):
 ----------------------------------------------
 An interactive version of this figure is available as Supplementary Material S1
@@ -24,6 +32,9 @@ Supplementary Material S1. Interactive 3D PCA cluster separation plot [Internet]
 GitHub Pages; 2026 [cited YYYY Mon DD]. Available from:
 https://senoldogan.github.io/DIA-Cluster-3D/
 
-Hyperlink for Word/LaTeX PDF:
------------------------------
-https://senoldogan.github.io/DIA-Cluster-3D/
+ONE-TIME SETUP (if link returns 404):
+-------------------------------------
+1. Open https://github.com/SenolDogan/DIA-Cluster-3D/settings/pages
+2. Build and deployment → Source: Deploy from a branch
+3. Branch: gh-pages, folder: / (root) → Save
+4. Wait 1–2 minutes; then https://senoldogan.github.io/DIA-Cluster-3D/ will work.
