@@ -45,6 +45,17 @@ plotly_symbols = {
     4: 'diamond',
 }
 
+legend_symbols = {
+    1: '●',
+    3: '■',
+    2: '✚',
+    4: '◆',
+}
+
+MARKER_SIZE = 6.5
+LEGEND_SYMBOL_SIZE = 24
+LEGEND_FONT_SIZE = 17
+
 fig = go.Figure()
 
 for cluster in cluster_order:
@@ -56,8 +67,9 @@ for cluster in cluster_order:
             z=X_pca_3d[mask, 2],
             mode='markers',
             name=cluster_names[cluster],
+            showlegend=False,
             marker=dict(
-                size=5,
+                size=MARKER_SIZE,
                 color=colors_new[cluster],
                 symbol=plotly_symbols[cluster],
                 line=dict(color='black', width=0.5),
@@ -89,6 +101,47 @@ for cluster in cluster_order:
     )
 
 var = pca_3d.explained_variance_ratio_
+
+# Custom legend: colored symbols + cluster names (top-left)
+legend_annotations = []
+legend_y_start = 0.975
+legend_row_step = 0.058
+n_rows = len(cluster_order)
+
+for i, cluster in enumerate(cluster_order):
+    color = colors_new[cluster]
+    name = cluster_names[cluster]
+    y = legend_y_start - i * legend_row_step
+
+    legend_annotations.append(dict(
+        xref='paper', yref='paper',
+        x=0.028, y=y,
+        text=legend_symbols[cluster],
+        font=dict(size=LEGEND_SYMBOL_SIZE, color=color, family='Arial Black, Arial, sans-serif'),
+        showarrow=False,
+        xanchor='center',
+        yanchor='middle',
+    ))
+    legend_annotations.append(dict(
+        xref='paper', yref='paper',
+        x=0.052, y=y,
+        text=f'<b>{name}</b>',
+        font=dict(size=LEGEND_FONT_SIZE, color=color, family='Arial Black, Arial, sans-serif'),
+        showarrow=False,
+        xanchor='left',
+        yanchor='middle',
+    ))
+
+legend_shapes = [dict(
+    type='rect',
+    xref='paper', yref='paper',
+    x0=0.008, y0=legend_y_start - (n_rows - 1) * legend_row_step - 0.028,
+    x1=0.155, y1=legend_y_start + 0.028,
+    line=dict(color='gray', width=1),
+    fillcolor='rgba(255,255,255,0.92)',
+    layer='below',
+)]
+
 fig.update_layout(
     title=dict(
         text='Cluster Separation - PCA Analysis (3D)',
@@ -122,19 +175,9 @@ fig.update_layout(
         ),
         bgcolor='white',
     ),
-    legend=dict(
-        x=0.02,
-        y=0.98,
-        xanchor='left',
-        yanchor='top',
-        bgcolor='rgba(255,255,255,0.9)',
-        bordercolor='gray',
-        borderwidth=1,
-        font=dict(size=17, family='Arial Black, Arial, sans-serif'),
-        itemsizing='constant',
-        itemwidth=36,
-        tracegroupgap=6,
-    ),
+    showlegend=False,
+    annotations=legend_annotations,
+    shapes=legend_shapes,
     margin=dict(l=0, r=0, t=60, b=0),
     paper_bgcolor='white',
     width=1100,
