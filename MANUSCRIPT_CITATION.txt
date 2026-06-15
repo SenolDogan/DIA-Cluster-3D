@@ -1,0 +1,29 @@
+MANUSCRIPT — READY-TO-PASTE TEXT
+================================
+
+Figure legend (add to static Figure X legend):
+----------------------------------------------
+An interactive version of this figure is available as Supplementary Material S1
+(https://senoldogan.github.io/DIA-Cluster-3D/).
+
+Supplementary Material section:
+-------------------------------
+Supplementary Material S1. Interactive three-dimensional principal component
+analysis plot of cluster separation. Patients are colored by cluster (SIDD,
+SIRD, MOD, MARD). The figure can be rotated and zoomed in a web browser.
+Available at: https://senoldogan.github.io/DIA-Cluster-3D/
+
+Data Availability / Supplementary Information:
+----------------------------------------------
+Interactive visualization of the 3D PCA cluster separation is provided as
+Supplementary Material S1: https://senoldogan.github.io/DIA-Cluster-3D/
+
+Vancouver style:
+----------------
+Supplementary Material S1. Interactive 3D PCA cluster separation plot [Internet].
+GitHub Pages; 2026 [cited YYYY Mon DD]. Available from:
+https://senoldogan.github.io/DIA-Cluster-3D/
+
+Hyperlink for Word/LaTeX PDF:
+-----------------------------
+https://senoldogan.github.io/DIA-Cluster-3D/
