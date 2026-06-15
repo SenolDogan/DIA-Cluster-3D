@@ -74,7 +74,7 @@ for cluster in cluster_order:
             mode='markers',
             name=f'{group} centroid',
             showlegend=False,
-            marker=dict(size=6, color='black', symbol='x', line=dict(width=2)),
+            marker=dict(size=6, color='#FFEB3B', symbol='x', line=dict(width=2)),
             hoverinfo='skip',
         )
     )
