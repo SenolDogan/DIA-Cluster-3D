@@ -83,15 +83,9 @@ for cluster in cluster_order:
 
 var = pca_3d.explained_variance_ratio_
 fig.update_layout(
-    title=dict(
-        text='Cluster Separation - PCA Analysis (3D)',
-        font=dict(size=18, family='Arial Black, Arial, sans-serif'),
-        x=0.5,
-        y=0.98,
-        pad=dict(t=2, b=0),
-    ),
+    title=None,
     scene=dict(
-        domain=dict(x=[0.0, 1.0], y=[0.0, 0.93]),
+        domain=dict(x=[0.0, 1.0], y=[0.0, 1.0]),
         xaxis=dict(
             title=dict(
                 text=f'PC1 ({var[0]:.2%} variance)',
@@ -119,18 +113,18 @@ fig.update_layout(
         bgcolor='white',
     ),
     showlegend=False,
-    margin=dict(l=0, r=0, t=22, b=0),
+    margin=dict(l=0, r=0, t=0, b=0),
     paper_bgcolor='white',
-    width=1100,
-    height=800,
+    width=920,
+    height=760,
 )
 
 plot_div_id = 'pca-plot-3d'
 plot_html = fig.to_html(
-    include_plotlyjs=True,
+    include_plotlyjs=False,
     full_html=False,
     div_id=plot_div_id,
-    config={'scrollZoom': True, 'displayModeBar': True},
+    config={'scrollZoom': True, 'displayModeBar': True, 'displaylogo': False},
 )
 
 legend_items_html = []
@@ -139,11 +133,11 @@ for cluster in cluster_order:
     color = colors_new[cluster]
     sym = legend_symbols[cluster]
     legend_items_html.append(
-        f'<div class="legend-item active" data-cluster="{group}" '
-        f'style="color:{color};" title="Click to show/hide">'
-        f'<span class="legend-symbol" style="color:{color};font-size:{LEGEND_SYMBOL_SIZE}px;">{sym}</span>'
-        f'<span class="legend-label" style="color:{color};font-size:{LEGEND_FONT_SIZE}px;">{group}</span>'
-        f'</div>'
+        f'<button type="button" class="legend-item active" data-cluster="{group}" '
+        f'aria-pressed="true" title="Click: show/hide · Double-click: isolate">'
+        f'<span class="legend-symbol" style="color:{color};">{sym}</span>'
+        f'<span class="legend-label" style="color:{color};">{group}</span>'
+        f'</button>'
     )
 
 trace_map_json = json.dumps(trace_map)
@@ -152,65 +146,98 @@ full_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cluster Separation - PCA Analysis (3D)</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
+  * {{ box-sizing: border-box; }}
   body {{
     margin: 0;
     background: #fff;
     font-family: Arial, sans-serif;
   }}
-  #figure-wrapper {{
-    position: relative;
+  #page {{
     width: 1100px;
-    height: 800px;
     margin: 0 auto;
+    padding: 6px 8px 10px;
+  }}
+  #plot-title {{
+    margin: 0 0 4px 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Arial Black', Arial, sans-serif;
+    line-height: 1.15;
+  }}
+  #main-row {{
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    height: 760px;
   }}
   #custom-legend {{
-    position: absolute;
-    top: 52px;
-    left: 12px;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.95);
+    width: 148px;
+    flex: 0 0 148px;
+    padding: 14px 10px 10px 8px;
+    background: rgba(255, 255, 255, 0.98);
     border: 1px solid #888;
     border-radius: 4px;
-    padding: 10px 14px 8px 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    pointer-events: auto;
-    user-select: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    z-index: 10;
   }}
   .legend-item {{
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 6px 0;
+    width: 100%;
+    margin: 0 0 10px 0;
+    padding: 4px 2px;
+    border: none;
+    background: transparent;
     cursor: pointer;
     font-weight: bold;
-    line-height: 1.1;
+    text-align: left;
   }}
-  .legend-item.inactive {{
-    opacity: 0.35;
-  }}
+  .legend-item:last-child {{ margin-bottom: 0; }}
+  .legend-item:hover {{ background: rgba(0,0,0,0.04); border-radius: 3px; }}
+  .legend-item.inactive {{ opacity: 0.35; }}
   .legend-item.inactive .legend-label,
   .legend-item.inactive .legend-symbol {{
     text-decoration: line-through;
   }}
   .legend-symbol {{
-    width: 26px;
+    width: 28px;
     text-align: center;
-    display: inline-block;
+    font-size: {LEGEND_SYMBOL_SIZE}px;
+    line-height: 1;
+    flex-shrink: 0;
   }}
-  #pca-plot-3d {{
+  .legend-label {{
+    font-size: {LEGEND_FONT_SIZE}px;
+    line-height: 1.1;
+  }}
+  #plot-area {{
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 760px;
+  }}
+  #{plot_div_id} {{
     width: 100%;
     height: 100%;
   }}
 </style>
 </head>
 <body>
-<div id="figure-wrapper">
-  <div id="custom-legend">
-    {''.join(legend_items_html)}
+<div id="page">
+  <h1 id="plot-title">Cluster Separation - PCA Analysis (3D)</h1>
+  <div id="main-row">
+    <div id="custom-legend" aria-label="Cluster legend">
+      {''.join(legend_items_html)}
+    </div>
+    <div id="plot-area">
+      {plot_html}
+    </div>
   </div>
-  {plot_html}
 </div>
 <script>
 (function() {{
@@ -221,30 +248,46 @@ full_html = f"""<!DOCTYPE html>
 
   function setClusterVisible(name, visible) {{
     const indices = TRACE_MAP[name];
-    Plotly.restyle(PLOT_ID, {{visible: visible}}, indices);
+    Plotly.restyle(PLOT_ID, {{'visible': visible}}, indices);
     visibility[name] = visible;
     const el = document.querySelector('.legend-item[data-cluster="' + name + '"]');
     if (el) {{
       el.classList.toggle('active', visible);
       el.classList.toggle('inactive', !visible);
+      el.setAttribute('aria-pressed', visible ? 'true' : 'false');
     }}
   }}
 
-  document.querySelectorAll('.legend-item').forEach(function(item) {{
-    item.addEventListener('click', function(e) {{
-      e.preventDefault();
-      e.stopPropagation();
-      const name = item.getAttribute('data-cluster');
-      setClusterVisible(name, !visibility[name]);
-    }});
-    item.addEventListener('dblclick', function(e) {{
-      e.preventDefault();
-      e.stopPropagation();
-      const name = item.getAttribute('data-cluster');
-      Object.keys(TRACE_MAP).forEach(function(other) {{
-        setClusterVisible(other, other === name);
+  function bindLegend() {{
+    document.querySelectorAll('.legend-item').forEach(function(item) {{
+      item.addEventListener('click', function(e) {{
+        e.preventDefault();
+        e.stopPropagation();
+        const name = item.getAttribute('data-cluster');
+        setClusterVisible(name, !visibility[name]);
+      }});
+      item.addEventListener('dblclick', function(e) {{
+        e.preventDefault();
+        e.stopPropagation();
+        const name = item.getAttribute('data-cluster');
+        Object.keys(TRACE_MAP).forEach(function(other) {{
+          setClusterVisible(other, other === name);
+        }});
       }});
     }});
+  }}
+
+  function waitForPlot(cb) {{
+    const gd = document.getElementById(PLOT_ID);
+    if (gd && gd.data && gd.data.length) {{
+      cb(gd);
+      return;
+    }}
+    setTimeout(function() {{ waitForPlot(cb); }}, 80);
+  }}
+
+  waitForPlot(function() {{
+    bindLegend();
   }});
 }})();
 </script>
@@ -257,4 +300,4 @@ with open(output_file, 'w', encoding='utf-8') as f:
     f.write(full_html)
 
 print(f"Interactive 3D PCA plot saved as '{output_file}'")
-print("Custom legend: click to toggle, double-click to isolate cluster.")
+print("Layout: legend left column · click to toggle clusters")
