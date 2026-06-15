@@ -53,8 +53,8 @@ legend_symbols = {
 }
 
 MARKER_SIZE = 6.5
-LEGEND_SYMBOL_SIZE = 24
-LEGEND_FONT_SIZE = 17
+LEGEND_SYMBOL_SIZE = 30
+LEGEND_FONT_SIZE = 18
 
 fig = go.Figure()
 
@@ -125,7 +125,7 @@ for i, cluster in enumerate(cluster_order):
     legend_annotations.append(dict(
         xref='paper', yref='paper',
         x=0.052, y=y,
-        text=f'<b>{name}</b>',
+        text=name,
         font=dict(size=LEGEND_FONT_SIZE, color=color, family='Arial Black, Arial, sans-serif'),
         showarrow=False,
         xanchor='left',
@@ -135,8 +135,8 @@ for i, cluster in enumerate(cluster_order):
 legend_shapes = [dict(
     type='rect',
     xref='paper', yref='paper',
-    x0=0.008, y0=legend_y_start - (n_rows - 1) * legend_row_step - 0.028,
-    x1=0.155, y1=legend_y_start + 0.028,
+    x0=0.008, y0=legend_y_start - (n_rows - 1) * legend_row_step - 0.032,
+    x1=0.165, y1=legend_y_start + 0.032,
     line=dict(color='gray', width=1),
     fillcolor='rgba(255,255,255,0.92)',
     layer='below',
