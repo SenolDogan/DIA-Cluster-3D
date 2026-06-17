@@ -53,7 +53,7 @@ for cluster in cluster_order:
                 size=MARKER_SIZE,
                 color=colors_new[cluster],
                 symbol=plotly_symbols[cluster],
-                line=dict(color='black', width=0.5),
+                line=dict(width=0),
                 opacity=0.75,
             ),
             hovertemplate=(
