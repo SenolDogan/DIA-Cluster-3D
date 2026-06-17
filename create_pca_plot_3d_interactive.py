@@ -5,6 +5,7 @@ Output: Cluster_Separation_PCA_3D_interactive.html
 """
 
 import json
+import re
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -54,8 +55,7 @@ for cluster in cluster_order:
                 size=MARKER_SIZE,
                 color=cluster_color,
                 symbol=plotly_symbols[cluster],
-                line=dict(color=cluster_color, width=0),
-                opacity=0.75,
+                opacity=1.0,
             ),
             hovertemplate=(
                 f'<b>{group}</b><br>'
@@ -126,6 +126,23 @@ plot_html = fig.to_html(
     full_html=False,
     div_id=plot_div_id,
     config={'scrollZoom': True, 'displayModeBar': True, 'displaylogo': False},
+)
+
+# Strip default marker outlines before first WebGL render
+plot_html = re.sub(
+    r'(\{"responsive": true\}\s*\)\s*)\};',
+    r'''\1).then(function(gd) {
+                        for (var i = 0; i < gd.data.length; i++) {
+                            var tr = gd.data[i];
+                            if (!tr.marker || (tr.name && tr.name.indexOf('centroid') >= 0)) continue;
+                            tr.marker.opacity = 1;
+                            tr.marker.line = {width: 0, color: tr.marker.color};
+                        }
+                        return Plotly.redraw(gd);
+                    });
+                };''',
+    plot_html,
+    count=1,
 )
 
 legend_items_html = []
@@ -282,12 +299,16 @@ full_html = f"""<!DOCTYPE html>
     for (var i = 0; i < gd.data.length; i++) {{
       var tr = gd.data[i];
       if (!tr.marker || (tr.name && tr.name.indexOf('centroid') >= 0)) continue;
-      var c = tr.marker.color;
-      Plotly.restyle(PLOT_ID, {{
-        'marker.line.width': 0,
-        'marker.line.color': 'rgba(0,0,0,0)'
-      }}, [i]);
+      var fill = tr.marker.color;
+      tr.marker.opacity = 1;
+      tr.marker.line = {{width: 0, color: fill}};
     }}
+    return Plotly.react(PLOT_ID, gd.data, gd.layout, {{
+      scrollZoom: true,
+      displayModeBar: true,
+      displaylogo: false,
+      responsive: true
+    }});
   }}
 
   function waitForPlot(cb) {{
@@ -300,8 +321,9 @@ full_html = f"""<!DOCTYPE html>
   }}
 
   waitForPlot(function(gd) {{
-    removeMarkerOutlines(gd);
-    bindLegend();
+    removeMarkerOutlines(gd).then(function() {{
+      bindLegend();
+    }});
   }});
 }})();
 </script>
