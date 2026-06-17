@@ -5,7 +5,6 @@ Output: Cluster_Separation_PCA_3D_interactive.html
 """
 
 import json
-import re
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -56,6 +55,7 @@ for cluster in cluster_order:
                 color=cluster_color,
                 symbol=plotly_symbols[cluster],
                 opacity=1.0,
+                line=dict(width=0, color=cluster_color),
             ),
             hovertemplate=(
                 f'<b>{group}</b><br>'
@@ -81,6 +81,13 @@ for cluster in cluster_order:
     )
     trace_indices.append(len(fig.data) - 1)
     trace_map[group] = trace_indices
+
+# Enforce zero-width borders on cluster marker traces
+for i, cluster in enumerate(cluster_order):
+    data_idx = i * 2
+    cluster_color = colors_new[cluster]
+    fig.data[data_idx].marker.line = dict(width=0, color=cluster_color)
+    fig.data[data_idx].marker.opacity = 1
 
 var = pca_3d.explained_variance_ratio_
 fig.update_layout(
@@ -128,23 +135,6 @@ plot_html = fig.to_html(
     config={'scrollZoom': True, 'displayModeBar': True, 'displaylogo': False},
 )
 
-# Strip default marker outlines before first WebGL render
-plot_html = re.sub(
-    r'(\{"responsive": true\}\s*\)\s*)\};',
-    r'''\1).then(function(gd) {
-                        for (var i = 0; i < gd.data.length; i++) {
-                            var tr = gd.data[i];
-                            if (!tr.marker || (tr.name && tr.name.indexOf('centroid') >= 0)) continue;
-                            tr.marker.opacity = 1;
-                            tr.marker.line = {width: 0, color: tr.marker.color};
-                        }
-                        return Plotly.redraw(gd);
-                    });
-                };''',
-    plot_html,
-    count=1,
-)
-
 legend_items_html = []
 for cluster in cluster_order:
     group = cluster_names[cluster]
@@ -166,7 +156,7 @@ full_html = f"""<!DOCTYPE html>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cluster Separation - PCA Analysis (3D)</title>
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-3.6.0.min.js"></script>
 <style>
   * {{ box-sizing: border-box; }}
   body {{
