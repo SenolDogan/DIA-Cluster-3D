@@ -26,12 +26,14 @@ cluster_names = {1: 'SIDD', 2: 'MOD', 3: 'SIRD', 4: 'MARD'}
 colors_new = {1: '#A6CEE3', 2: '#FBB4AE', 3: '#B2DF8A', 4: '#CAB2D6'}
 cluster_order = [1, 3, 2, 4]
 
-plotly_symbols = {1: 'circle', 3: 'square', 2: 'cross', 4: 'diamond'}
-legend_symbols = {1: '●', 3: '■', 2: '✚', 4: '◆'}
-
 MARKER_SIZE = 6.5
 LEGEND_FONT_SIZE = 18
 LEGEND_SYMBOL_SIZE = 22
+plotly_symbols = {1: 'circle', 2: 'cross', 4: 'diamond'}
+legend_symbols = {1: '●', 2: '✚', 3: '▲', 4: '◆'}
+TEXT_MARKER_CLUSTERS = {3}
+TEXT_MARKER_CHAR = {3: '▲'}
+TEXT_MARKER_SIZE = 18
 
 fig = go.Figure()
 trace_map = {}
@@ -42,29 +44,53 @@ for cluster in cluster_order:
     trace_indices = []
 
     cluster_color = colors_new[cluster]
-    fig.add_trace(
-        go.Scatter3d(
-            x=X_pca_3d[mask, 0],
-            y=X_pca_3d[mask, 1],
-            z=X_pca_3d[mask, 2],
-            mode='markers',
-            name=group,
-            showlegend=False,
-            marker=dict(
-                size=MARKER_SIZE,
-                color=cluster_color,
-                symbol=plotly_symbols[cluster],
-                opacity=1.0,
-                line=dict(width=0, color=cluster_color),
-            ),
-            hovertemplate=(
-                f'<b>{group}</b><br>'
-                'PC1: %{x:.2f}<br>'
-                'PC2: %{y:.2f}<br>'
-                'PC3: %{z:.2f}<extra></extra>'
-            ),
+    if cluster in TEXT_MARKER_CLUSTERS:
+        fig.add_trace(
+            go.Scatter3d(
+                x=X_pca_3d[mask, 0],
+                y=X_pca_3d[mask, 1],
+                z=X_pca_3d[mask, 2],
+                mode='text',
+                text=[TEXT_MARKER_CHAR[cluster]] * int(mask.sum()),
+                textfont=dict(
+                    color=cluster_color,
+                    size=TEXT_MARKER_SIZE,
+                    family='Arial Black, Arial, sans-serif',
+                ),
+                name=group,
+                showlegend=False,
+                hovertemplate=(
+                    f'<b>{group}</b><br>'
+                    'PC1: %{x:.2f}<br>'
+                    'PC2: %{y:.2f}<br>'
+                    'PC3: %{z:.2f}<extra></extra>'
+                ),
+            )
         )
-    )
+    else:
+        fig.add_trace(
+            go.Scatter3d(
+                x=X_pca_3d[mask, 0],
+                y=X_pca_3d[mask, 1],
+                z=X_pca_3d[mask, 2],
+                mode='markers',
+                name=group,
+                showlegend=False,
+                marker=dict(
+                    size=MARKER_SIZE,
+                    color=cluster_color,
+                    symbol=plotly_symbols[cluster],
+                    opacity=1.0,
+                    line=dict(width=0, color=cluster_color),
+                ),
+                hovertemplate=(
+                    f'<b>{group}</b><br>'
+                    'PC1: %{x:.2f}<br>'
+                    'PC2: %{y:.2f}<br>'
+                    'PC3: %{z:.2f}<extra></extra>'
+                ),
+            )
+        )
     trace_indices.append(len(fig.data) - 1)
 
     fig.add_trace(
