@@ -41,6 +41,7 @@ for cluster in cluster_order:
     group = cluster_names[cluster]
     trace_indices = []
 
+    cluster_color = colors_new[cluster]
     fig.add_trace(
         go.Scatter3d(
             x=X_pca_3d[mask, 0],
@@ -51,9 +52,9 @@ for cluster in cluster_order:
             showlegend=False,
             marker=dict(
                 size=MARKER_SIZE,
-                color=colors_new[cluster],
+                color=cluster_color,
                 symbol=plotly_symbols[cluster],
-                line=dict(width=0),
+                line=dict(color=cluster_color, width=0),
                 opacity=0.75,
             ),
             hovertemplate=(
@@ -277,6 +278,18 @@ full_html = f"""<!DOCTYPE html>
     }});
   }}
 
+  function removeMarkerOutlines(gd) {{
+    for (var i = 0; i < gd.data.length; i++) {{
+      var tr = gd.data[i];
+      if (!tr.marker || (tr.name && tr.name.indexOf('centroid') >= 0)) continue;
+      var c = tr.marker.color;
+      Plotly.restyle(PLOT_ID, {{
+        'marker.line.width': 0,
+        'marker.line.color': 'rgba(0,0,0,0)'
+      }}, [i]);
+    }}
+  }}
+
   function waitForPlot(cb) {{
     const gd = document.getElementById(PLOT_ID);
     if (gd && gd.data && gd.data.length) {{
@@ -286,7 +299,8 @@ full_html = f"""<!DOCTYPE html>
     setTimeout(function() {{ waitForPlot(cb); }}, 80);
   }}
 
-  waitForPlot(function() {{
+  waitForPlot(function(gd) {{
+    removeMarkerOutlines(gd);
     bindLegend();
   }});
 }})();
